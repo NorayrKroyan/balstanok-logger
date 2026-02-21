@@ -1,0 +1,25 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish (single EXE)
+        run: dotnet publish BalStanokLogger/BalStanokLogger.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BalStanokLogger-win-x64
+          path: BalStanokLogger/bin/Release/net8.0-windows/win-x64/publish/
